@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Performance Analyzer</title>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI';
+            background: linear-gradient(135deg, #a23dc7, #bc49ab);
+            color: white;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 85%;
+            margin: auto;
+        }
+
+        .card {
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px;
+            width: 150px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: #a100c9;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #000000;
+        }
+
+        /* NEW: Chart container */
+        .chart-container {
+            width: 500px;
+            height: 300px;
+            color: blue;
+            margin: auto;
+        }
+
+        .result {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        .highlight {
+            color: #20d86a;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<header>
+     Student Performance Analyzer
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Enter Marks</h2>
+        <input type="number" id="eng" placeholder="English">
+        <input type="number" id="math" placeholder="Maths">
+        <input type="number" id="sci" placeholder="Science">
+        <input type="number" id="soc" placeholder="Social">
+        <input type="number" id="cs" placeholder="Computer Science">
+        <br>
+        <button onclick="analyze()">Analyze Performance</button>
+    </div>
+
+    <div class="card">
+        <h2>Performance Chart</h2>
+        <div class="chart-container">
+            <canvas id="barChart"></canvas>
+        </div>
+
+    </div>
+
+    <div class="card">
+        <h2>Results</h2>
+        <p id="avg" class="result"></p>
+        <p id="gpa" class="result"></p>
+        <p id="performance" class="result"></p>
+        <p id="recommendation" class="result highlight"></p>
+    </div>
+
+</div>
+
+<script>
+let chart;
+
+function analyze() {
+
+    let marks = [
+        Number(document.getElementById("eng").value),
+        Number(document.getElementById("math").value),
+        Number(document.getElementById("sci").value),
+        Number(document.getElementById("soc").value),
+        Number(document.getElementById("cs").value)
+    ];
+
+    if (marks.includes(0) || marks.includes(NaN)) {
+        alert("Please enter all marks!");
+        return;
+    }
+
+    let avg = marks.reduce((a,b)=>a+b,0)/marks.length;
+    let gpa = (avg / 10).toFixed(2);
+
+    let performance;
+    let recommendation;
+
+    if (avg >= 85) {
+        performance = "Excellent";
+        recommendation = "Keep up the great work! Aim for advanced projects";
+    } else if (avg >= 70) {
+        performance = "Good";
+        recommendation = "Focus on weak subjects and practice more";
+    } else if (avg >= 50) {
+        performance = "Average";
+        recommendation = "Need improvement. Revise basics and practice daily";
+    } else {
+        performance = "Poor";
+        recommendation = "Strong focus required. Seek help and build fundamentals";
+    }
+
+    document.getElementById("avg").innerText = "Average: " + avg.toFixed(2);
+    document.getElementById("gpa").innerText = "GPA: " + gpa;
+    document.getElementById("performance").innerText = "Performance: " + performance;
+    document.getElementById("recommendation").innerText = recommendation;
+
+    if (chart) chart.destroy();
+
+    chart = new Chart(document.getElementById("barChart"), {
+        type: 'bar',
+        data: {
+            labels: ["English", "Maths", "Science", "Social", "CS"],
+            datasets: [{
+                label: "Marks",
+                data: marks
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    ticks: {
+                        color: "#ffffff"
+                    }
+                },
+                y: {
+                ticks: {
+                    color: "#ffffff"
+                }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                    color: "#ffffff"
+                    }
+                }
+            }
+}        
+    });
+}
+</script>
+
+</body>
+</html>
